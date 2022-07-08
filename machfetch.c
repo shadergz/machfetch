@@ -65,7 +65,7 @@ int main()
     printf("Endianness: %s\n", *(char*)&test_value ? "Little-Endian (LE)" : "Big-Endian (BE)");
     printf("Test bit value: ");
     for (int i = 31; i >= 0 ; i--)
-        if (printf("%d", test_value>>i & 1))
+        if (printf("\e[36m%d\e[0m", test_value>>i & 1))
             if (i % 8 == 0)
                 printf(" ");
     puts("");
@@ -93,16 +93,20 @@ int main()
     
     do_cpuid(cpuid_data);
 
-    printf("Stepping ID: %d\n (Hardware bugs fixes and erratas)", cpuid_data[EAX_REG] & 0x10 /* 2⁴ -> HEXA */);
+    printf("Stepping ID: %d (Hardware bugs fixes and erratas)\n", cpuid_data[EAX_REG] & 0x10 /* 2⁴ -> HEXA */);
 
     puts("\t[CPU] Features:");
 
     printf("Features:");
 
     if (cpuid_data[EDX_REG] & 1)
-        printf(" +fpu Onboard x87 FPU+");
+        printf(" +\e[32mfpu\e[0m Onboard x87 FPU+");
     if (cpuid_data[EDX_REG] >> 25 & 1)
-        printf(" +sse SSE instructions (a.k.a. Katmai New Instructions)+");
+        printf(" +\e[32msse\e[0m SSE instructions (a.k.a. Katmai New Instructions)+");
+    if (cpuid_data[EDX_REG] >> 26 & 1)
+        printf (" +\e[32msse2\e[0m SSE2 instructions+");
+    if (cpuid_data[ECX_REG] & 1)
+        printf (" +\e[32msse3\e[0m Prescott New Instructions-SSE3 (PNI)+");
 
     puts("");
 
@@ -134,7 +138,7 @@ int main()
 
     printf("Supported features:");
     if (cpuid_data[EBX_REG] & 5)
-        printf(" avx2");
+        printf(" +\e[32mavx2\e[0m Advanced Vector Extensions 2+");
     
 
 }
