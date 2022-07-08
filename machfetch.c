@@ -87,6 +87,14 @@ int main()
 
     printf("Manufacturer ID: %12s\n", (const char*)cpu_manu_id);
 
+    puts("\t[CPU] Signature:");
+
+    cpuid_data[EAX_REG] = 1;
+    
+    do_cpuid(cpuid_data);
+
+    printf("Stepping ID: %d\n (Hardware bugs fixes and erratas)", cpuid_data[EAX_REG] & 0x10 /* 2⁴ -> HEXA */);
+
     if (max_cpuid_parameter >= 0x16)
     {
         cpuid_data[EAX_REG] = 0x16;
