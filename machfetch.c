@@ -70,7 +70,7 @@ int main()
                 printf(" ");
     puts("");
 
-    int cpuid_data[4];
+    int cpuid_data[4] = {};
 
     cpuid_data[EAX_REG] = 0;
     
@@ -80,7 +80,7 @@ int main()
 
     printf("Max cpuid parameter %d\n", max_cpuid_parameter);
 
-    int cpu_manu_id[sizeof(int) * 3] = {0};
+    int cpu_manu_id[sizeof(int) * 3] = {};
     cpu_manu_id[0] = cpuid_data[EBX_REG];
     cpu_manu_id[1] = cpuid_data[EDX_REG];
     cpu_manu_id[2] = cpuid_data[ECX_REG];
