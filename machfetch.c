@@ -51,7 +51,7 @@ int main()
     printf("Operating system release: %s\n", osname.release);
     printf("Operating system version: %s\n", osname.version);
 
-    puts("\tHardware information");
+    puts("\tHardware information:");
     puts("\t[CPU]");
     
     char *machine = osname.machine;
@@ -95,6 +95,17 @@ int main()
 
     printf("Stepping ID: %d\n (Hardware bugs fixes and erratas)", cpuid_data[EAX_REG] & 0x10 /* 2⁴ -> HEXA */);
 
+    puts("\t[CPU] Features:");
+
+    printf("Features:");
+
+    if (cpuid_data[EDX_REG] & 1)
+        printf(" +fpu Onboard x87 FPU+");
+    if (cpuid_data[EDX_REG] >> 25 & 1)
+        printf(" +sse SSE instructions (a.k.a. Katmai New Instructions)+");
+
+    puts("");
+
     if (max_cpuid_parameter >= 0x16)
     {
         cpuid_data[EAX_REG] = 0x16;
@@ -106,7 +117,7 @@ int main()
         printf("Processor Bus frequency: %04d Mhz\n", cpuid_data[ECX_REG]);
     }
 
-    puts("\t[CPU]: Thermal and power management");
+    puts("\t[CPU] Thermal and power management:");
 
     cpuid_data[EAX_REG] = 6;
 
@@ -114,7 +125,7 @@ int main()
 
     printf("Digital Thermal Sensor: %s\n", cpuid_data[EAX_REG] & 1 ? "available" : "not available");
 
-    puts("\t[CPU]: Extended Features");
+    puts("\t[CPU] Extended Features:");
 
     cpuid_data[EAX_REG] = 7;
     cpuid_data[ECX_REG] = 0;
