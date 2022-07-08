@@ -41,7 +41,7 @@ enum arch_machine
 
 int main()
 {
-    puts("\tOS information:");
+    puts("\n\tOS information:\n");
 
     struct utsname osname;
     uname(&osname);
@@ -51,8 +51,8 @@ int main()
     printf("Operating system release: %s\n", osname.release);
     printf("Operating system version: %s\n", osname.version);
 
-    puts("\tHardware information:");
-    puts("\t[CPU]");
+    puts("\n\tHardware information:\n");
+    puts("\n\t[CPU]\n");
     
     char *machine = osname.machine;
     
@@ -87,15 +87,37 @@ int main()
 
     printf("Manufacturer ID: %12s\n", (const char*)cpu_manu_id);
 
-    puts("\t[CPU] Signature:");
+    puts("\n\t[CPU] Signature:\n");
 
     cpuid_data[EAX_REG] = 1;
     
     do_cpuid(cpuid_data);
 
-    printf("Stepping ID: %d (Hardware bugs fixes and erratas)\n", cpuid_data[EAX_REG] & 0x10 /* 2⁴ -> HEXA */);
+    printf("Stepping ID: 0x%02x (Hardware bugs fixes and erratas)\n", cpuid_data[EAX_REG] & 0x10 /* 2⁴ -> HEXA */);
 
-    puts("\t[CPU] Features:");
+    int cpu_brand[12] = {}; /* 12 * 4 = 48 bytes */
+    
+    cpuid_data[EAX_REG] = 0x80000002;
+
+    do_cpuid(cpuid_data);
+   
+    memcpy(cpu_brand + 0, cpuid_data, sizeof(cpuid_data));
+
+    cpuid_data[EAX_REG] = 0x80000003;
+
+    do_cpuid(cpuid_data);
+   
+    memcpy(cpu_brand + 4, cpuid_data, sizeof(cpuid_data));
+
+    cpuid_data[EAX_REG] = 0x80000004;
+    
+    do_cpuid(cpuid_data);
+
+    memcpy(cpu_brand + 8, cpuid_data, sizeof(cpuid_data));    
+
+    printf("Brand: %s\n", (const char*)cpu_brand);
+
+    puts("\n\t[CPU] Features:\n");
 
     printf("Features:");
 
@@ -125,7 +147,7 @@ int main()
         printf("Processor Bus frequency: %04d Mhz\n", cpuid_data[ECX_REG]);
     }
 
-    puts("\t[CPU] Thermal and power management:");
+    puts("\n\t[CPU] Thermal and power management:\n");
 
     cpuid_data[EAX_REG] = 6;
 
@@ -133,7 +155,7 @@ int main()
 
     printf("Digital Thermal Sensor: %s\n", cpuid_data[EAX_REG] & 1 ? "available" : "not available");
 
-    puts("\t[CPU] Extended Features:");
+    puts("\n\t[CPU] Extended Features:\n");
 
     cpuid_data[EAX_REG] = 7;
     cpuid_data[ECX_REG] = 0;
@@ -141,9 +163,11 @@ int main()
     do_cpuid(cpuid_data);
 
     printf("Supported features:");
-    if (cpuid_data[EBX_REG] & 5)
+    if ((cpuid_data[EBX_REG] >> 5) & 1)
         printf(" +\e[32mavx2\e[0m Advanced Vector Extensions 2+");
+    if ((cpuid_data[EBX_REG] >> 29) & 1)
+        printf(" +\e[32msha\e[0m Intel SHA extensions+");
     
-
+    puts("");
 }
 
