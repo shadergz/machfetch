@@ -22,7 +22,7 @@ static int *do_cpuid (int cpu_regs[4])
            // : "%eax", "%ebx", "%ecx", "%edx"
     );
 
-  /* Modifify the cpu_reg list */
+  /* Modifing the cpu_reg list */
   cpu_regs[EAX_REG] = eax;
   cpu_regs[EBX_REG] = ebx;
   cpu_regs[ECX_REG] = ecx;
@@ -102,12 +102,16 @@ int main ()
 
   if (cpuid_data[EDX_REG] & 1)
     printf (" +\e[32mfpu\e[0m Onboard x87 FPU+");
-  if (cpuid_data[EDX_REG] >> 25 & 1)
+  if ((cpuid_data[EDX_REG] >> 25) & 1)
     printf (" +\e[32msse\e[0m SSE instructions (a.k.a. Katmai New Instructions)+");
-  if (cpuid_data[EDX_REG] >> 26 & 1)
+  if ((cpuid_data[EDX_REG] >> 26) & 1)
     printf (" +\e[32msse2\e[0m SSE2 instructions+");
   if (cpuid_data[ECX_REG] & 1)
     printf (" +\e[32msse3\e[0m Prescott New Instructions-SSE3 (PNI)+");
+  if ((cpuid_data[ECX_REG] >> 19) & 1)
+    printf (" +\e[32msse4.1\e[0m SSE4.1 instructions+");
+  if ((cpuid_data[ECX_REG] >> 20) & 1)
+    printf (" +\e[32msse4.2\e[0m SSE4.2 instructions+");
 
   puts ("");
 
